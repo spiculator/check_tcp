@@ -1,11 +1,12 @@
 package main
-import(
+
+import (
 	"flag"
 	"fmt"
-	"os"
-	"time"
-	"regexp"
 	"net"
+	"os"
+	"regexp"
+	"time"
 )
 
 func main() {
@@ -39,10 +40,10 @@ func main() {
 
 	allOK := true
 	for 0 != len(set) {
-		select{
+		select {
 		case got := <-ch:
 			delete(set, got.addr)
-			if ! got.ok {
+			if !got.ok {
 				fmt.Printf("TCP %s fail: %s\n", got.addr, got.err)
 				allOK = false
 			}
@@ -56,12 +57,16 @@ func main() {
 			os.Exit(1)
 		}
 	}
-	if ! allOK {
+	if !allOK {
 		os.Exit(1)
 	}
 }
 
-type response struct{addr string; err string; ok bool }
+type response struct {
+	addr string
+	err  string
+	ok   bool
+}
 
 func check(ch chan response, srv string) {
 	srvWithPort := srv
@@ -69,30 +74,30 @@ func check(ch chan response, srv string) {
 		srvWithPort = srv + ":9"
 	}
 	if ok, _ := regexp.MatchString(`^\d+\.\d+\.\d+\.\d+:\d+$`, srvWithPort); !ok {
-		ch <-response{ok:false, addr: srv, err: "bad server, must be <ip> or <ip>:<port>"}
+		ch <- response{ok: false, addr: srv, err: "bad server, must be <ip> or <ip>:<port>"}
 		return
 	}
 	_, err := net.Dial("tcp", srvWithPort)
 	if nil == err {
 		//ch <-response{addr: srv, err: "connected", ok: false}
-		ch <-response{ok: true, addr: srv}
-	} else if err.Error() == "dial tcp " + srvWithPort + ": connection refused" {
-		ch <-response{ok: true, addr: srv}
+		ch <- response{ok: true, addr: srv}
+	} else if err.Error() == "dial tcp "+srvWithPort+": connection refused" {
+		ch <- response{ok: true, addr: srv}
 	} else {
-		ch <-response{addr: srv, err: err.Error(), ok: false}
+		ch <- response{addr: srv, err: err.Error(), ok: false}
 	}
 }
 
 func sendTimeout(tch chan bool, t float64) {
 	time.Sleep(time.Duration(t * float64(time.Second)))
-	tch <-true
+	tch <- true
 }
 
 func warnf(f string, args ...interface{}) {
-	fmt.Fprintf(os.Stderr, "Warning: " + f + "\n", args...)
+	fmt.Fprintf(os.Stderr, "Warning: "+f+"\n", args...)
 }
 
 func dief(f string, args ...interface{}) {
-	fmt.Fprintf(os.Stderr, "Error: " + f + "\n", args...)
+	fmt.Fprintf(os.Stderr, "Error: "+f+"\n", args...)
 	os.Exit(1)
 }
