@@ -92,12 +92,3 @@ func sendTimeout(tch chan<- bool, t float64) {
 	time.Sleep(time.Duration(t * float64(time.Second)))
 	tch <- true
 }
-
-func warnf(f string, args ...interface{}) {
-	fmt.Fprintf(os.Stderr, "Warning: "+f+"\n", args...)
-}
-
-func dief(f string, args ...interface{}) {
-	fmt.Fprintf(os.Stderr, "Error: "+f+"\n", args...)
-	os.Exit(1)
-}
