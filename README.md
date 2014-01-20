@@ -7,3 +7,5 @@ Check TCP connectivity for many servers at once.
 	    -a=false: show all servers, including OK status
 	    -q=false: quietly exit when no servers in cmdline
 	    -t=1: timeout waiting for response
+
+Download precompiled binaries from here: http://redin.info/files/prj/go/check_tcp
