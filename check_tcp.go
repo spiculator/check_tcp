@@ -68,7 +68,7 @@ type response struct {
 	ok   bool
 }
 
-func check(ch chan response, srv string) {
+func check(ch chan<- response, srv string) {
 	srvWithPort := srv
 	if hasColon, _ := regexp.MatchString(`:`, srv); !hasColon {
 		srvWithPort = srv + ":9"
@@ -88,7 +88,7 @@ func check(ch chan response, srv string) {
 	}
 }
 
-func sendTimeout(tch chan bool, t float64) {
+func sendTimeout(tch chan<- bool, t float64) {
 	time.Sleep(time.Duration(t * float64(time.Second)))
 	tch <- true
 }
